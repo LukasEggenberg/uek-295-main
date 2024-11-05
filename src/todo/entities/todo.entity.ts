@@ -1,6 +1,16 @@
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+
+@Entity()
 export class Todo {
-    id: number;
-    title: string;
-    description: string;
-    closed: boolean;
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column()
+  title: string;
+
+  @Column({ nullable: true })
+  description: string;
+
+  @Column({ default: false })
+  closed: boolean;
 }

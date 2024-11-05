@@ -8,25 +8,18 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
-
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
-
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-
     "test-sample": "jest --config jest/jest.test-sample-config.json",
     "check-todo-all": "npm run lint && npm run test-todo:cov && npm run test-todo:e2e && npm run build ",
-
     "test-todo": "jest --config jest/jest.todo-config.json",
     "test-template": "jest --config jest/jest.template.config.json",
-
     "test-todo:cov": "jest --coverage --config jest/jest.todo-config.json",
     "test-template:cov": "jest --coverage --config jest/jest.template.config.json",
-
     "test-todo:e2e": "jest --config test/jest/jest-todo-e2e.json",
     "test-template:e2e": "jest --config test/jest/jest-template-e2e.json"
   },
@@ -49,6 +42,7 @@
     "pkginfo": "^0.4.1",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
+    "sqlite3": "^5.1.7",
     "typeorm": "^0.3.20"
   },
   "devDependencies": {
