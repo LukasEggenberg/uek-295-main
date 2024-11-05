@@ -4,7 +4,8 @@ import { Constants } from '../../constants/constants';
 
 function getParamDecoratorFactory(decorator: (...args: any[]) => any) {
   class Test {
-    public test(@decorator() _: any) {}
+    // eslint-disable-next-line
+    public test(@decorator() value: any) {}
   }
 
   const args = Reflect.getMetadata(ROUTE_ARGS_METADATA, Test, 'test');
