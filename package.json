@@ -1,8 +1,8 @@
 {
   "name": "api",
-  "version": "1.0.0",
-  "description": "final api [Dein Name] uek-295",
-  "author": "coach|https://wiki.ict-uek.ch/|coach@ict-uek.ch",
+  "version": "1.0.6",
+  "description": "REST api-Lukas-Eggenberg/Richard-Glaus ÜK-295 Klasse INFW2023a",
+  "author": "Lukas Eggenberg | www.Payrexx.com | lukas.eggenberg@bluewin.ch | Richard Glaus | www.Nexplore.ch | rgl@nexplore.ch",
   "license": "MIT|https://opensource.org/license/mit",
   "private": true,
   "scripts": {
