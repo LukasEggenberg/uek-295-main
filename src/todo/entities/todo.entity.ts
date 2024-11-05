@@ -1,1 +1,6 @@
-export class Todo {}
+export class Todo {
+    id: number;
+    title: string;
+    description: string;
+    closed: boolean;
+}
