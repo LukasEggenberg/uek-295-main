@@ -2,11 +2,9 @@ import { CorrId } from './correlation-id.decorator';
 import { ROUTE_ARGS_METADATA } from '@nestjs/common/constants';
 import { Constants } from '../../constants/constants';
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-function getParamDecoratorFactory(decorator: Function) {
+function getParamDecoratorFactory(decorator: (...args: any[]) => any) {
   class Test {
-    // eslint-disable-next-line @typescript-eslint/no-empty-function,@typescript-eslint/no-unused-vars
-    public test(@decorator() value) {}
+    public test(@decorator() _: any) {}
   }
 
   const args = Reflect.getMetadata(ROUTE_ARGS_METADATA, Test, 'test');

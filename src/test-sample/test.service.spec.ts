@@ -7,8 +7,7 @@ import { TestEntity } from './entities/test.entity';
 
 // wir definieren einen MockType welchen wir später verwenden können um Rückgabewerte Wunschgemäss zu verändern
 export type MockType<T> = {
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  [P in keyof T]?: jest.Mock<{}>;
+  [P in keyof T]?: jest.Mock<object>;
 };
 
 describe('TestService', () => {

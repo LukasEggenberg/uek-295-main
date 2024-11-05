@@ -1,8 +1,7 @@
 import { Repository } from 'typeorm';
 
 export type MockType<T> = {
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  [P in keyof T]?: jest.Mock<{}>;
+  [P in keyof T]?: jest.Mock<object>;
 };
 
 export const RepositoryMockFactory: () => MockType<Repository<any>> = jest.fn(() => ({

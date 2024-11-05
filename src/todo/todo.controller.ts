@@ -3,7 +3,7 @@ import { TodoService } from './todo.service';
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
 import { JwtAuthGuard } from '../sample/modules/auth/guards/jwt-auth.guard';
-import { RoleGuard } from '../sample/modules/auth/guards/role.gard'
+import { RoleGuard } from '../sample/modules/auth/guards/role.gard';
 import { Roles } from '../sample/decorators/roles.decorator';
 
 @Controller('todo')
