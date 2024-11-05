@@ -14,7 +14,7 @@ import { Security } from '../../../security';
     PassportModule,
     JwtModule.register({
       secret: Security.secret,
-      signOptions: { expiresIn: `${parseInt(process.env.JWT_EXPIRES_IN_S || '60)', 10)}s` },
+      signOptions: { expiresIn: 1830815047 },
     }),
   ],
   controllers: [AuthController, ProfileController],
