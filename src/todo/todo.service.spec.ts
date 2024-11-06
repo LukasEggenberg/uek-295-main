@@ -8,7 +8,6 @@ import { CreateTodoDto } from './dto/create-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
 import { UpdateResult } from 'typeorm';
 import { DeleteResult } from 'typeorm';
-import { mock } from 'node:test';
 
 describe('TodoService', () => {
   let service: TodoService;
@@ -39,19 +38,19 @@ describe('TodoService', () => {
   describe('create', () => {
     it('should successfully create a todo', async () => {
       const createTodoDto: CreateTodoDto = { title: 'New Todo', description: 'New Description' };
-      const mockResult = { ...createTodoDto, id: 1, closed: false}
+      const mockResult = { ...createTodoDto, id: 1, closed: false };
       jest.spyOn(repository, 'create').mockReturnValue(mockResult);
-      jest.spyOn(repository, 'save').mockResolvedValue(mockResult);  // Simulate a successful save
-     
+      jest.spyOn(repository, 'save').mockResolvedValue(mockResult); // Simulate a successful save
+
       const result = await service.create(createTodoDto);
       expect(result).toEqual(mockResult);
       expect(repository.save).toHaveBeenCalledWith(expect.objectContaining(createTodoDto));
     });
-    
+
     it('should throw BadRequestException on invalid data', async () => {
       const invalidCreateTodoDto: CreateTodoDto = { title: '', description: '' }; // Invalid data
-      jest.spyOn(repository, 'save').mockRejectedValue(new Error());  // Simulate an error from the repository
-     
+      jest.spyOn(repository, 'save').mockRejectedValue(new Error()); // Simulate an error from the repository
+
       await expect(service.create(invalidCreateTodoDto)).rejects.toThrow(BadRequestException);
     });
   });
@@ -95,7 +94,7 @@ describe('TodoService', () => {
       jest.spyOn(repository, 'update').mockResolvedValue({
         affected: 1,
         raw: [],
-        generatedMaps: []
+        generatedMaps: [],
       } as UpdateResult);
       jest.spyOn(service, 'findOne').mockResolvedValue({ ...mockTodo, ...updateTodoDto });
 
@@ -118,7 +117,7 @@ describe('TodoService', () => {
       jest.spyOn(repository, 'delete').mockResolvedValue({
         affected: 1,
         raw: [],
-        generatedMaps: []
+        generatedMaps: [],
       } as DeleteResult);
 
       await expect(service.remove(1)).resolves.toBeUndefined();

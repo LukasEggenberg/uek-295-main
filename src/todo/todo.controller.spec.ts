@@ -1,16 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TodoController } from './todo.controller';
 import { TodoService } from './todo.service';
-import { ForbiddenException, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { ForbiddenException } from '@nestjs/common';
 import { Todo } from './entities/todo.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { RoleGuard } from '../sample/modules/auth/guards/role.guard';
-
-// Mock data for Todo entity
-const mockTodo = { id: 1, title: 'Test Todo', description: 'Test description' };
-const nonAdminUser = { name: 'User', roles: ['user'] }; // Mock non-admin user
-const adminUser = { name: 'Admin', roles: ['admin'] }; // Mock admin user
 
 describe('TodoController', () => {
   let todoController: TodoController;
@@ -27,15 +22,15 @@ describe('TodoController', () => {
         },
       ],
     })
-    .overrideGuard(RoleGuard)
-    .useValue({
-      canActivate: (context) => {
-        const request = context.switchToHttp().getRequest();
-        request.user = { roles: ['user']}
-        return true;
-      }
-    })
-    .compile();
+      .overrideGuard(RoleGuard)
+      .useValue({
+        canActivate: (context) => {
+          const request = context.switchToHttp().getRequest();
+          request.user = { roles: ['user'] };
+          return true;
+        },
+      })
+      .compile();
 
     todoController = module.get<TodoController>(TodoController);
     todoService = module.get<TodoService>(TodoService);
@@ -56,8 +51,6 @@ describe('TodoController', () => {
       expect(foundTodo).toBe(result);
       expect(todoService.findOne).toHaveBeenCalledWith(1); // We can still convert the string to a number in the service
     });
-
-    
   });
 
   describe('delete', () => {
@@ -66,7 +59,7 @@ describe('TodoController', () => {
 
       // Call the `remove` method with the ID of the Todo and an admin user
       await expect(todoController.remove('1')).resolves.toBeUndefined(); // ID should be passed as string (as per the route param)
-      
+
       // Ensure the remove method in the service is called with the correct ID (converted to number inside the service)
       expect(todoService.remove).toHaveBeenCalledWith(1); // Service expects a number, so we verify it is passed as a number
     });

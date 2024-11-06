@@ -6,4 +6,3 @@ export class UpdateTodoDto extends PartialType(CreateTodoDto) {
   @ApiProperty({ description: 'Status des ToDo-Elements', example: false, default: false })
   closed?: boolean;
 }
-

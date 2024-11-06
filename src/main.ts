@@ -20,9 +20,9 @@ const port = process.env.SERVER_PORT || 3000;
 const apiName = process.env.API_NAME || 'api';
 
 // read from package.json
- const name = module.exports.name;
+const name = module.exports.name;
 const version = module.exports.version;
- const description = module.exports.description;
+const description = module.exports.description;
 const [authorName, authorUrl, authorEmail] = module.exports.author.split('|');
 const [licenseName, licenseUrl] = module.exports.license.split('|');
 
