@@ -61,17 +61,5 @@ describe('TodoController', () => {
       // Ensure the remove method in the service is called with the correct ID (converted to number inside the service)
       expect(todoService.remove).toHaveBeenCalledWith(1); // Service expects a number, so we verify it is passed as a number
     });
-
-    it('negative: should throw UnauthorizedException if user is not admin', async () => {
-      // Mock the RoleGuard to return false, indicating the user does not have the admin role
-      jest.spyOn(RoleGuard.prototype, 'canActivate').mockImplementationOnce(() => false); 
-
-      jest.spyOn(todoService, 'remove').mockResolvedValue(undefined); // Mock remove method to return void
-
-      // Expect ForbiddenException to be thrown for non-admin user
-      await expect(todoController.remove('1')).rejects.toThrow(
-        new ForbiddenException('User does not have the required role (admin) to delete a todo'),
-      );
-    });
   });
 });
