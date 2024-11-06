@@ -22,6 +22,9 @@
     "test-todo:cov": "jest --coverage --config jest/jest.todo-config.json",
     "test-template:cov": "jest --coverage --config jest/jest.template.config.json",
     "test-todo:e2e": "jest --config test/jest/jest-todo-e2e.json",
+    "test-article:e2e": "jest --config test/jest/jest-todo-e2e.json",
+    "test-base:e2e": "jest --config test/jest/jest-todo-e2e.json",
+    "test-security:e2e": "jest --config test/jest/jest-todo-e2e.json",
     "test-template:e2e": "jest --config test/jest/jest-template-e2e.json"
   },
   "dependencies": {
