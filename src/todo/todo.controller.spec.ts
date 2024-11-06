@@ -26,7 +26,16 @@ describe('TodoController', () => {
           useClass: Repository,
         },
       ],
-    }).compile();
+    })
+    .overrideGuard(RoleGuard)
+    .useValue({
+      canActivate: (context) => {
+        const request = context.switchToHttp().getRequest();
+        request.user = { roles: ['user']}
+        return true;
+      }
+    })
+    .compile();
 
     todoController = module.get<TodoController>(TodoController);
     todoService = module.get<TodoService>(TodoService);
@@ -61,5 +70,21 @@ describe('TodoController', () => {
       // Ensure the remove method in the service is called with the correct ID (converted to number inside the service)
       expect(todoService.remove).toHaveBeenCalledWith(1); // Service expects a number, so we verify it is passed as a number
     });
+  });
+
+  it('negative: should deny a normal user from deleting', async () => {
+    // given
+    const todoId = '1';
+    jest.spyOn(todoService, 'remove').mockResolvedValue();
+
+    try {
+      // when
+      await todoController.remove(todoId);
+    } catch (error) {
+      // then
+      expect(error).toBeInstanceOf(ForbiddenException);
+      expect(error.message).toBe('Access denied');
+      expect(todoService.remove).not.toHaveBeenCalled();
+    }
   });
 });
