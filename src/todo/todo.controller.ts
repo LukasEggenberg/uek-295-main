@@ -5,7 +5,7 @@ import { CreateTodoDto } from './dto/create-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
 import { ReturnTodoDto } from './dto/return-todo.dto';
 import { JwtAuthGuard } from '../sample/modules/auth/guards/jwt-auth.guard';
-import { RoleGuard } from '../sample/modules/auth/guards/role.gard';
+import { RoleGuard } from '../sample/modules/auth/guards/role.guard';
 import { Roles } from '../sample/decorators/roles.decorator';
 import { Todo } from './entities/todo.entity';
 
@@ -62,6 +62,7 @@ export class TodoController {
 
   @Delete(':id')
   @Roles('admin')
+  @UseGuards(RoleGuard)
   @ApiOperation({ summary: 'Delete a ToDo item' })
   @ApiResponse({ status: HttpStatus.NO_CONTENT, description: 'ToDo deleted successfully' })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'ToDo not found' })
