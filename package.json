@@ -1,8 +1,8 @@
 {
-  "name": "api",
+  "name": "api-uek-295",
   "version": "1.0.6",
-  "description": "REST api-Lukas-Eggenberg/Richard-Glaus ÜK-295 Klasse INFW2023a",
-  "author": "Lukas Eggenberg | www.Payrexx.com | lukas.eggenberg@bluewin.ch | Richard Glaus | www.Nexplore.ch | rgl@nexplore.ch",
+  "description": "REST api-Lukas-Eggenberg-Richard-Glaus ÜK-295 Klasse INFW2023a",
+  "author": "Lukas Eggenberg Richard Glaus | www.Payrexx.com | lukas.eggenberg@bluewin.ch",
   "license": "MIT|https://opensource.org/license/mit",
   "private": true,
   "scripts": {
@@ -43,6 +43,7 @@
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
     "sqlite3": "^5.1.7",
+    "swagger-ui-express": "^5.0.1",
     "typeorm": "^0.3.20"
   },
   "devDependencies": {
