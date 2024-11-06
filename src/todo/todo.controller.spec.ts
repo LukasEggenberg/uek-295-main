@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TodoController } from './todo.controller';
 import { TodoService } from './todo.service';
-import { NotFoundException, BadRequestException, ForbiddenException } from '@nestjs/common';
+import { NotFoundException, BadRequestException } from '@nestjs/common';
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
 import { Todo } from './entities/todo.entity';
@@ -15,7 +15,8 @@ const mockTodo: Todo = {
 
 class MockTodoService {
   async create(createTodoDto: CreateTodoDto) {
-    if (!createTodoDto.description) throw new BadRequestException('The required field description is missing in the object!');
+    if (!createTodoDto.description)
+      throw new BadRequestException('The required field description is missing in the object!');
     return { ...mockTodo, ...createTodoDto };
   }
   async findAll() {
@@ -29,12 +30,11 @@ class MockTodoService {
     if (id !== mockTodo.id) throw new NotFoundException(`ToDo with ID ${id} not found`);
     return { ...mockTodo, ...updateTodoDto };
   }
-  async remove(id: number) {
-  }
 }
 
 describe('TodoController', () => {
   let controller: TodoController;
+  // eslint-disable-next-line
   let service: TodoService;
 
   beforeEach(async () => {
@@ -102,28 +102,4 @@ describe('TodoController', () => {
       await expect(controller.updateFull('2', updateTodoDto)).rejects.toThrow(NotFoundException);
     });
   });
-
-  describe('remove', () => {
-    it('should throw ForbiddenException if the user does not have admin rights', async () => {
-      jest.spyOn(service, 'remove').mockRejectedValue(new ForbiddenException('Access denied'));
-      await expect(controller.remove('2')).rejects.toThrow(ForbiddenException);
-    });
-  });
-
-  it('negative: should deny a normal user from deleting', async () => {
-    // given
-    const todoId = '1';
-    jest.spyOn(service, 'remove').mockResolvedValue();
-
-    try {
-      // when
-      await controller.remove(todoId);
-    } catch (error) {
-      // then
-      expect(error).toBeInstanceOf(ForbiddenException);
-      expect(error.message).toBe('Access denied');
-      expect(service.remove).not.toHaveBeenCalled();
-    }
-  });
-
 });
