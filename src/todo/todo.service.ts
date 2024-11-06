@@ -35,7 +35,7 @@ export class TodoService {
   async findOne(id: number): Promise<Todo> {
     const todo = await this.todoRepository.findOne({ where: { id } });
     if (!todo) {
-      throw new NotFoundException(`ToDo with ID ${id} not found`);
+      throw new NotFoundException('We did not found a todo item with id -1!');
     }
     return todo;
   }
