@@ -8,6 +8,7 @@ import { CreateTodoDto } from './dto/create-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
 import { UpdateResult } from 'typeorm';
 import { DeleteResult } from 'typeorm';
+import { mock } from 'node:test';
 
 describe('TodoService', () => {
   let service: TodoService;
@@ -38,10 +39,12 @@ describe('TodoService', () => {
   describe('create', () => {
     it('should successfully create a todo', async () => {
       const createTodoDto: CreateTodoDto = { title: 'New Todo', description: 'New Description' };
-      jest.spyOn(repository, 'save').mockResolvedValue(mockTodo);  // Simulate a successful save
+      const mockResult = { ...createTodoDto, id: 1, closed: false}
+      jest.spyOn(repository, 'create').mockReturnValue(mockResult);
+      jest.spyOn(repository, 'save').mockResolvedValue(mockResult);  // Simulate a successful save
      
       const result = await service.create(createTodoDto);
-      expect(result).toEqual(mockTodo);
+      expect(result).toEqual(mockResult);
       expect(repository.save).toHaveBeenCalledWith(expect.objectContaining(createTodoDto));
     });
     
@@ -88,13 +91,13 @@ describe('TodoService', () => {
   describe('update', () => {
     it('should update and return the updated todo', async () => {
       const updateTodoDto: UpdateTodoDto = { title: 'Updated Todo', description: 'Updated Description' };
-      jest.spyOn(service, 'findOne').mockResolvedValue(mockTodo);
+      jest.spyOn(service, 'findOne').mockResolvedValueOnce(mockTodo);
       jest.spyOn(repository, 'update').mockResolvedValue({
         affected: 1,
         raw: [],
         generatedMaps: []
       } as UpdateResult);
-      jest.spyOn(repository, 'findOne').mockResolvedValue({ ...mockTodo, ...updateTodoDto });
+      jest.spyOn(service, 'findOne').mockResolvedValue({ ...mockTodo, ...updateTodoDto });
 
       const result = await service.update(1, updateTodoDto);
       expect(result).toEqual({ ...mockTodo, ...updateTodoDto });
