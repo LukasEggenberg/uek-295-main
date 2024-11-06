@@ -15,7 +15,7 @@ export class RoleGuard implements CanActivate {
     const user = request.user;
 
     if (!requiredRoles.some((role) => user.roles.includes(role))) {
-      throw new ForbiddenException('Access denied');
+      throw new ForbiddenException('You have to be member of the role admin to call this method!');
     }
     return true;
   }

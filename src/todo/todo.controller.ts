@@ -64,10 +64,12 @@ export class TodoController {
   @Roles('admin')
   @UseGuards(RoleGuard)
   @ApiOperation({ summary: 'Delete a ToDo item' })
-  @ApiResponse({ status: HttpStatus.NO_CONTENT, description: 'ToDo deleted successfully' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'ToDo deleted successfully', type: ReturnTodoDto })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'ToDo not found' })
-  @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id') id: string): Promise<void> {
-    return this.todoService.remove(+id);
+  @HttpCode(HttpStatus.OK)
+  async remove(@Param('id') id: string): Promise<Todo> {
+    const todo = await this.todoService.findOne(+id);
+    await this.todoService.remove(+id);
+    return todo;
   }
 }
