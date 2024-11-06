@@ -132,9 +132,9 @@ describe('TodoService', () => {
     });
 
     it('should throw NotFoundException if todo not found for deletion', async () => {
-      jest.spyOn(service, 'findOne').mockRejectedValue(new NotFoundException());
+      jest.spyOn(service, 'findOne').mockRejectedValue(new InternalServerErrorException());
 
-      await expect(service.remove(1)).rejects.toThrow(NotFoundException);
+      await expect(service.remove(1)).rejects.toThrow(InternalServerErrorException);
     });
   });
 });

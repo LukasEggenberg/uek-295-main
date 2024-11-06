@@ -1,83 +1,129 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TodoController } from './todo.controller';
 import { TodoService } from './todo.service';
-import { ForbiddenException } from '@nestjs/common';
+import { NotFoundException, BadRequestException, ForbiddenException } from '@nestjs/common';
+import { CreateTodoDto } from './dto/create-todo.dto';
+import { UpdateTodoDto } from './dto/update-todo.dto';
 import { Todo } from './entities/todo.entity';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { RoleGuard } from '../sample/modules/auth/guards/role.guard';
+
+const mockTodo: Todo = {
+  id: 1,
+  title: 'Test Todo',
+  description: 'Test Description',
+  closed: false,
+};
+
+class MockTodoService {
+  async create(createTodoDto: CreateTodoDto) {
+    if (!createTodoDto.description) throw new BadRequestException('The required field description is missing in the object!');
+    return { ...mockTodo, ...createTodoDto };
+  }
+  async findAll() {
+    return [mockTodo];
+  }
+  async findOne(id: number) {
+    if (id !== mockTodo.id) throw new NotFoundException(`ToDo with ID ${id} not found`);
+    return mockTodo;
+  }
+  async update(id: number, updateTodoDto: UpdateTodoDto) {
+    if (id !== mockTodo.id) throw new NotFoundException(`ToDo with ID ${id} not found`);
+    return { ...mockTodo, ...updateTodoDto };
+  }
+  async remove(id: number) {
+  }
+}
 
 describe('TodoController', () => {
-  let todoController: TodoController;
-  let todoService: TodoService;
+  let controller: TodoController;
+  let service: TodoService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [TodoController],
-      providers: [
-        TodoService,
-        {
-          provide: getRepositoryToken(Todo),
-          useClass: Repository,
-        },
-      ],
-    })
-      .overrideGuard(RoleGuard)
-      .useValue({
-        canActivate: (context) => {
-          const request = context.switchToHttp().getRequest();
-          request.user = { roles: ['user'] };
-          return true;
-        },
-      })
-      .compile();
+      providers: [{ provide: TodoService, useClass: MockTodoService }],
+    }).compile();
 
-    todoController = module.get<TodoController>(TodoController);
-    todoService = module.get<TodoService>(TodoService);
+    controller = module.get<TodoController>(TodoController);
+    service = module.get<TodoService>(TodoService);
   });
 
-  it('controller should be defined', () => {
-    expect(todoController).toBeDefined();
+  it('should be defined', () => {
+    expect(controller).toBeDefined();
   });
 
-  describe('findOne', () => {
-    it('positive: should return a valid todo item', async () => {
-      const id = '1'; // id should be a string, as per the controller route parameter
-      const result = { id: 1, title: 'Test Todo', description: 'Test Descr', closed: true };
+  describe('create', () => {
+    it('should create a todo', async () => {
+      const createTodoDto: CreateTodoDto = { title: 'New Todo', description: 'New Description' };
+      expect(await controller.create(createTodoDto)).toEqual({ ...mockTodo, ...createTodoDto });
+    });
 
-      jest.spyOn(todoService, 'findOne').mockResolvedValue(result);
-
-      const foundTodo = await todoController.findOne(id);
-      expect(foundTodo).toBe(result);
-      expect(todoService.findOne).toHaveBeenCalledWith(1); // We can still convert the string to a number in the service
+    it('should throw BadRequestException if description is missing', async () => {
+      const createTodoDto: CreateTodoDto = { title: 'New Todo', description: '' };
+      await expect(controller.create(createTodoDto)).rejects.toThrow(BadRequestException);
     });
   });
 
-  describe('delete', () => {
-    it('positive: should delete a todo', async () => {
-      jest.spyOn(todoService, 'remove').mockResolvedValue(undefined); // Mocking the service's `remove` method to return `undefined`
+  describe('findAll', () => {
+    it('should return an array of todos', async () => {
+      expect(await controller.findAll()).toEqual([mockTodo]);
+    });
+  });
 
-      // Call the `remove` method with the ID of the Todo and an admin user
-      await expect(todoController.remove('1')).resolves.toBeUndefined(); // ID should be passed as string (as per the route param)
+  describe('findOne', () => {
+    it('should return a todo if it exists', async () => {
+      expect(await controller.findOne('1')).toEqual(mockTodo);
+    });
 
-      // Ensure the remove method in the service is called with the correct ID (converted to number inside the service)
-      expect(todoService.remove).toHaveBeenCalledWith(1); // Service expects a number, so we verify it is passed as a number
+    it('should throw NotFoundException if the todo does not exist', async () => {
+      await expect(controller.findOne('2')).rejects.toThrow(NotFoundException);
+    });
+  });
+
+  describe('updatePartial', () => {
+    it('should update and return the updated todo', async () => {
+      const updateTodoDto: UpdateTodoDto = { title: 'Updated Todo', description: 'Updated Description' };
+      expect(await controller.updatePartial('1', updateTodoDto)).toEqual({ ...mockTodo, ...updateTodoDto });
+    });
+
+    it('should throw NotFoundException if the todo does not exist for partial update', async () => {
+      const updateTodoDto: UpdateTodoDto = { title: 'Updated Todo', description: 'Updated Description' };
+      await expect(controller.updatePartial('2', updateTodoDto)).rejects.toThrow(NotFoundException);
+    });
+  });
+
+  describe('updateFull', () => {
+    it('should replace and return the updated todo', async () => {
+      const updateTodoDto: UpdateTodoDto = { title: 'Replaced Todo', description: 'Replaced Description' };
+      expect(await controller.updateFull('1', updateTodoDto)).toEqual({ ...mockTodo, ...updateTodoDto });
+    });
+
+    it('should throw NotFoundException if the todo does not exist for full update', async () => {
+      const updateTodoDto: UpdateTodoDto = { title: 'Replaced Todo', description: 'Replaced Description' };
+      await expect(controller.updateFull('2', updateTodoDto)).rejects.toThrow(NotFoundException);
+    });
+  });
+
+  describe('remove', () => {
+    it('should throw ForbiddenException if the user does not have admin rights', async () => {
+      jest.spyOn(service, 'remove').mockRejectedValue(new ForbiddenException('Access denied'));
+      await expect(controller.remove('2')).rejects.toThrow(ForbiddenException);
     });
   });
 
   it('negative: should deny a normal user from deleting', async () => {
     // given
     const todoId = '1';
-    jest.spyOn(todoService, 'remove').mockResolvedValue();
+    jest.spyOn(service, 'remove').mockResolvedValue();
 
     try {
       // when
-      await todoController.remove(todoId);
+      await controller.remove(todoId);
     } catch (error) {
       // then
       expect(error).toBeInstanceOf(ForbiddenException);
       expect(error.message).toBe('Access denied');
-      expect(todoService.remove).not.toHaveBeenCalled();
+      expect(service.remove).not.toHaveBeenCalled();
     }
   });
+
 });

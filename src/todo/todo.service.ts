@@ -20,7 +20,6 @@ export class TodoService {
       const newTodo = this.todoRepository.create(createTodoDto);
       return await this.todoRepository.save(newTodo);
     } catch {
-      // If save fails or any error occurs, we throw a BadRequestException
       throw new BadRequestException('The required field title is missing in the object!');
     }
   }
@@ -42,6 +41,8 @@ export class TodoService {
   }
 
   async update(id: number, updateTodoDto: UpdateTodoDto): Promise<Todo> {
+    // eslint-disable-next-line
+    const todo = await this.findOne(id);
     try {
       await this.todoRepository.update(id, updateTodoDto);
       return await this.findOne(id);
@@ -51,6 +52,8 @@ export class TodoService {
   }
 
   async remove(id: number): Promise<void> {
+    // eslint-disable-next-line
+    const todo = await this.findOne(id);
     try {
       await this.todoRepository.delete(id);
     } catch {
