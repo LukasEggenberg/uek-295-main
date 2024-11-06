@@ -14,9 +14,15 @@ export class TodoService {
 
   async create(createTodoDto: CreateTodoDto): Promise<Todo> {
     try {
+      // If data is invalid, this is where you can add validation checks before attempting to save
+      if (!createTodoDto.title || !createTodoDto.description) {
+        throw new BadRequestException('Invalid data provided');
+      }
+  
       const newTodo = this.todoRepository.create(createTodoDto);
       return await this.todoRepository.save(newTodo);
     } catch (error) {
+      // If save fails or any error occurs, we throw a BadRequestException
       throw new BadRequestException('Invalid data provided');
     }
   }
